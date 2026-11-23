@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>terminal.exe</title>
+<style>
+:root{color-scheme:dark;--green:#70ff9a;--line:#65f78b;--dark:#081b11}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#030703;color:var(--green);font-family:Consolas,'Courier New',monospace}
+body{display:grid;place-items:center;padding:10px}
+.terminal{width:min(900px,100%);min-height:min(650px,96vh);background:#060c07;border:1px solid #285437;box-shadow:0 0 45px #1aff4311}
+.bar{height:30px;border-bottom:1px solid #285437;color:#72977b;text-align:center;line-height:29px;font-size:11px}
+.screen{padding:25px 18px;min-height:575px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.command{align-self:flex-start;font-size:14px;min-height:18px;margin-bottom:12px}
+.command.typing:after{content:'_';animation:blink .7s steps(1) infinite}
+.stage{width:100%;min-height:390px;display:grid;place-items:center}
+.hand{display:block;width:min(380px,85vw);max-height:420px;overflow:visible;opacity:0;filter:drop-shadow(0 0 12px #29ff6540)}
+.hand.visible{opacity:1;animation:appear .65s both, hover 2.7s ease-in-out 1.6s infinite}
+.hand .middle-finger{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.15)}
+.hand.visible .middle-finger{animation:raise .8s cubic-bezier(.2,1.5,.42,1) .5s both}
+.hand .outline{fill:#0c2918;stroke:var(--line);stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
+.hand .detail{fill:none;stroke:#3cbb69;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.hand .highlight{fill:none;stroke:#a0ffc0;stroke-width:2.3;stroke-linecap:round;opacity:.75}
+button{font:inherit;font-size:13px;color:#7cff9a;border:1px solid #326f43;background:transparent;padding:9px 16px;cursor:pointer}
+button:hover{background:#102a17}
+button[hidden]{display:none}
+@keyframes blink{50%{opacity:0}}
+@keyframes appear{from{opacity:0;transform:translateY(95px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes raise{0%{transform:scaleY(.15)}75%{transform:scaleY(1.06)}100%{transform:scaleY(1)}}
+@keyframes hover{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-9px) rotate(1.5deg)}}
+@media(max-width:520px){.screen{min-height:530px;padding:16px 8px}.stage{min-height:355px}.hand{width:min(330px,88vw)}}
+@media(prefers-reduced-motion:reduce){.hand.visible,.hand.visible .middle-finger{animation:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<main class="terminal">
+ <div class="bar">terminal.exe</div>
+ <div class="screen">
+  <div id="command" class="command"></div>
+  <div class="stage">
+   <svg id="hand" class="hand" viewBox="0 0 440 440" role="img" aria-label="Mano vectorial animada mostrando el dedo del medio" xmlns="http://www.w3.org/2000/svg">
+    <!-- El dedo central se levanta por separado detrás de los nudillos. -->
+    <g class="middle-finger">
+      <path class="outline" d="M193 262 L193 86 C193 69 205 56 220 56 C235 56 247 69 247 86 L247 262 Z" />
+      <path class="highlight" d="M203 195 V88 C203 76 210 68 220 68"/>
+      <path class="detail" d="M205 103 Q220 110 235 103" />
+    </g>
+    <!-- Nudillos de los dedos índice, anular y meñique doblados. -->
+    <path class="outline" d="M136 270 L136 244 Q136 221 157 219 L179 219 Q193 221 195 238 L195 270 Z" />
+    <path class="outline" d="M247 271 L247 238 Q248 219 267 219 L289 221 Q305 223 305 243 L305 272 Z" />
+    <path class="outline" d="M303 277 L303 256 Q305 239 320 237 L333 240 Q346 243 347 264 L347 288 Z" />
+    <!-- Palma y muñeca. -->
+    <path class="outline" d="M129 258 Q112 251 104 267 Q96 283 104 309 L124 361 Q136 386 161 397 L168 421 L281 421 L286 396 Q322 380 337 352 Q357 312 350 277 Q344 258 328 259 Q311 257 300 270 Q284 251 263 258 Q247 243 223 255 Q202 245 182 259 Q151 244 129 258 Z" />
+    <!-- Articulaciones de los cuatro dedos recogidos. -->
+    <path class="detail" d="M123 278 Q150 261 175 278 Q187 290 173 304" />
+    <path class="detail" d="M179 273 Q201 261 218 276 Q229 291 214 307" />
+    <path class="detail" d="M220 270 Q241 260 258 273 Q272 286 257 303" />
+    <path class="detail" d="M263 277 Q289 260 306 274 Q318 290 304 304" />
+    <path class="detail" d="M170 395 Q224 408 283 393" />
+    <!-- Pulgar cruzado hacia el centro: es el elemento que hace reconocible el puño. -->
+    <path class="outline" d="M110 305 Q115 286 136 281 Q151 278 163 291 L191 322 Q215 329 237 326 Q258 326 262 343 Q268 363 246 371 Q204 383 170 368 Q139 358 118 342 Q104 328 110 305 Z" />
+    <path class="highlight" d="M119 303 Q128 288 140 292 L173 330" />
+    <path class="detail" d="M190 354 Q219 362 242 352" />
+   </svg>
+  </div>
+  <button id="repeat" hidden>Repetir</button>
+ </div>
+</main>
+<script>
+const hand=document.getElementById('hand');
+const command=document.getElementById('command');
+const repeat=document.getElementById('repeat');
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+let run=0;
+async function play(){
+ const id=++run;
+ hand.classList.remove('visible');
+ // Reinicia las animaciones CSS sin recargar la página.
+ void hand.getBoundingClientRect();
+ repeat.hidden=true;
+ command.textContent='';
+ command.classList.add('typing');
+ for(const ch of 'C:\\> execute.exe'){
+  if(id!==run)return;
+  command.textContent+=ch;
+  await delay(48);
+ }
+ if(id!==run)return;
+ command.classList.remove('typing');
+ await delay(240);
+ if(id!==run)return;
+ hand.classList.add('visible');
+ await delay(1500);
+ if(id!==run)return;
+ repeat.hidden=false;
+}
+repeat.addEventListener('click',play);
+play();
+</script>
+</body>
+</html>
